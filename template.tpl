@@ -11,7 +11,7 @@ ___INFO___
 {
   "type": "TAG",
   "id": "cvt_temp_public_id",
-  "version": 2,
+  "version": 1,
   "securityGroups": [],
   "displayName": "iAdvize - Custom Data tag",
   "categories": [
@@ -49,13 +49,13 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "GROUP",
         "name": "productIDFormatOptions",
-        "displayName": "Format options",
+        "displayName": "Advanced settings",
         "groupStyle": "ZIPPY_CLOSED",
         "subParams": [
           {
             "type": "RADIO",
             "name": "productIDCaseFormattingOption",
-            "displayName": "Case option",
+            "displayName": "Format options",
             "radioItems": [
               {
                 "value": "DEFAULT",
@@ -73,7 +73,8 @@ ___TEMPLATE_PARAMETERS___
                 "help": "This option forces the entire product ID value into lower case"
               }
             ],
-            "simpleValueType": true
+            "simpleValueType": true,
+            "defaultValue": "DEFAULT"
           }
         ]
       }
@@ -275,6 +276,7 @@ customDataPairs[DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME] = getProductIDValue(data.pr
 // Conversation Custom Data and Visitor fields
 // Visitor fields will override custom data with same key
 customData.concat(visitorFields).forEach((customData) => {
+  if (!customData || !customData.name) return;
   customDataPairs[customData.name] = getCustomDataValue(customData.value, customData.type);
 });
 
@@ -388,3 +390,5 @@ setup: ''
 ___NOTES___
 
 Created on 14/05/2025 09:22:35
+
+
