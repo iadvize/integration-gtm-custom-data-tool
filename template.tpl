@@ -11,7 +11,7 @@ ___INFO___
 {
   "type": "TAG",
   "id": "cvt_temp_public_id",
-  "version": 1,
+  "version": 2,
   "securityGroups": [],
   "displayName": "iAdvize - Custom Data tag",
   "categories": [
@@ -35,7 +35,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "copilot",
-    "displayName": "iAdvize Shopping Assistant",
+    "displayName": "iAdvize Copilot",
     "groupStyle": "NO_ZIPPY",
     "subParams": [
       {
@@ -43,13 +43,13 @@ ___TEMPLATE_PARAMETERS___
         "name": "productIDValue",
         "displayName": "Your product ID variable",
         "simpleValueType": true,
-        "help": "This variable lets iAdvize know which product is currently displayed to your visitors.\nThis is useful for adapting “Conversation Starters” and enabling the iAdvize Shopping Assistant to answer questions about the right product.",
+        "help": "This variable lets iAdvize know which product is currently displayed to your visitors.\nThis is useful for adapting “Conversation Starters” and enabling the iAdvize Copilot to answer questions about the right product.",
         "valueValidators": []
       },
       {
         "type": "GROUP",
         "name": "productIDFormatOptions",
-        "displayName": "Advanced options",
+        "displayName": "Format options",
         "groupStyle": "ZIPPY_CLOSED",
         "subParams": [
           {
@@ -150,7 +150,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "customDataGroup",
-    "displayName": "Conversation Custom Data",
+    "displayName": "Custom Data",
     "groupStyle": "NO_ZIPPY",
     "subParams": [
       {
@@ -221,28 +221,28 @@ const makeNumber = require('makeNumber');
 const logToConsole = require('logToConsole');
 
 const DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME = "product_id";
-const idzCustomData = copyFromWindow('idzCustomData') || {};
+const customDataPairs = {};
 const customData = data.customDataTable || [];
 const visitorFields = data.visitorFieldTable || [];
 
 function getCustomDataValue(value, type) {
   
+  if (value === null || value === undefined) return;
+  
   let returnValue = value;
     
-  switch (type) {
-        
+  switch (type) { 
     case "STRING":
       returnValue = makeString(value) || value;
     break;
-    
+
     case "NUMBER":
       returnValue = makeNumber(makeString(value).replace(',', '.')) || value;
     break;
-        
+
     case "BOOLEAN":
       returnValue = ["1", "yes", "YES", "true", "TRUE"].indexOf(value) !== -1;
     break;
-    
   }
   
   return returnValue;
@@ -250,6 +250,8 @@ function getCustomDataValue(value, type) {
 }
 
 function getProductIDValue(unformattedProductID, caseOption) {
+  
+  if (!unformattedProductID) return;
   
   let formattedProductID = makeString(unformattedProductID).trim();
 
@@ -260,9 +262,7 @@ function getProductIDValue(unformattedProductID, caseOption) {
       
     case "LOWERCASE":
       formattedProductID = formattedProductID.toLowerCase();
-
-    break;
-      
+    break; 
   }
 
   return formattedProductID;
@@ -270,28 +270,23 @@ function getProductIDValue(unformattedProductID, caseOption) {
 }
 
 // Copilot product ID
-if (data.productIDValue) {
-  idzCustomData[DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME] = getProductIDValue(data.productIDValue, data.productIDCaseFormattingOption);
-}
+customDataPairs[DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME] = getProductIDValue(data.productIDValue, data.productIDCaseFormattingOption);
 
 // Conversation Custom Data and Visitor fields
 // Visitor fields will override custom data with same key
 customData.concat(visitorFields).forEach((customData) => {
-  idzCustomData[customData.name] = getCustomDataValue(customData.value, customData.type);
+  customDataPairs[customData.name] = getCustomDataValue(customData.value, customData.type);
 });
 
-// Put in window idzCustomData
-setInWindow('idzCustomData', idzCustomData, true);
-
-// Force custom data updates
+// Push Custom Data pairs to iAdvize
 const iAdvizeInterface = copyFromWindow('iAdvizeInterface') || [];
 iAdvizeInterface.push(function(iAdvize) {
-  iAdvize.navigate('');
+  iAdvize.set("customData", customDataPairs);
 });
 setInWindow('iAdvizeInterface', iAdvizeInterface, true);
 
 // For debug purposes
-logToConsole("idzCustomData", copyFromWindow('idzCustomData'));
+logToConsole("Provided Custom Data:", customDataPairs);
 
 data.gtmOnSuccess();
 
@@ -332,45 +327,6 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 2,
             "listItem": [
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "idzCustomData"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
               {
                 "type": 3,
                 "mapKey": [
