@@ -1,6 +1,8 @@
 homepage: "https://www.iadvize.com"
 documentation: "https://help.iadvize.com/hc/en-gb/articles/206855657"
 versions:
+  - sha: 7e06950486d340767d689a80c252e446f0d6ddac
+    changeNotes: Improve custom data handling
   - sha: bc6e9dc5f803aff8909d44639980b28ca9ce992e
     changeNotes: Use default value for product_id format options
   - sha: 927dec3cba9f1b088d2ec434de9e3dec01de17bd
