@@ -226,6 +226,10 @@ const customDataPairs = {};
 const customData = data.customDataTable || [];
 const visitorFields = data.visitorFieldTable || [];
 
+// Temporary fix. Remove as soon as P&E fix ticket #MSG-10330
+setInWindow('idzCustomData', copyFromWindow('idzCustomData') || {}, true);
+
+
 function getCustomDataValue(value, type) {
   
   if (value === null || value === undefined) return;
