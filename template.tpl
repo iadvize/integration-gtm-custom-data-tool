@@ -226,9 +226,6 @@ const customDataPairs = {};
 const customData = data.customDataTable || [];
 const visitorFields = data.visitorFieldTable || [];
 
-// Temporary fix. Remove as soon as P&E fix ticket #MSG-10330
-setInWindow('idzCustomData', copyFromWindow('idzCustomData') || {}, true);
-
 
 function getCustomDataValue(value, type) {
   
@@ -246,7 +243,7 @@ function getCustomDataValue(value, type) {
     break;
 
     case "BOOLEAN":
-      returnValue = ["1", "yes", "YES", "true", "TRUE"].indexOf(value) !== -1;
+      returnValue = ["1", "yes", "YES", "true", "TRUE", true, 1].indexOf(value) !== -1;
     break;
   }
   
@@ -275,7 +272,11 @@ function getProductIDValue(unformattedProductID, caseOption) {
 }
 
 // Copilot product ID
-customDataPairs[DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME] = getProductIDValue(data.productIDValue, data.productIDCaseFormattingOption);
+// Only push productID value if not null, undefined or empty
+const productIDValue = getProductIDValue(data.productIDValue, data.productIDCaseFormattingOption);
+if (productIDValue !== null && productIDValue !== undefined && productIDValue !== "") {
+  customDataPairs[DEFAULT_CUSTOM_DATA_PRODUCT_ID_NAME] = productIDValue;
+}
 
 // Conversation Custom Data and Visitor fields
 // Visitor fields will override custom data with same key
@@ -357,45 +358,6 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "iAdvizeInterface"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "idzCustomData"
                   },
                   {
                     "type": 8,
