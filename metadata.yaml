@@ -1,6 +1,8 @@
 homepage: "https://www.iadvize.com"
 documentation: "https://help.iadvize.com/hc/en-gb/articles/206855657"
 versions:
+  - sha: 70b5e137eaa21360b40f1b4b88df59d3751a0a25
+    changeNotes: Avoid setting a null/empty productId, complete the conversion of boolean-type custom data, and remove an obsolete permission
   - sha: 84496b9956bcb3bf565d9dab7fcd1d058880a9af
     changeNotes: Add missing permission to improve custom data handling
   - sha: 7e06950486d340767d689a80c252e446f0d6ddac
